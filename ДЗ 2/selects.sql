@@ -1,30 +1,6 @@
 -- 1. Все товары, в названии которых есть "urgent" или название начинается с "Animal".
 
-SELECT [StockItemID]
-      ,[StockItemName]
-      ,[SupplierID]
-      ,[ColorID]
-      ,[UnitPackageID]
-      ,[OuterPackageID]
-      ,[Brand]
-      ,[Size]
-      ,[LeadTimeDays]
-      ,[QuantityPerOuter]
-      ,[IsChillerStock]
-      ,[Barcode]
-      ,[TaxRate]
-      ,[UnitPrice]
-      ,[RecommendedRetailPrice]
-      ,[TypicalWeightPerUnit]
-      ,[MarketingComments]
-      ,[InternalComments]
-      ,[Photo]
-      ,[CustomFields]
-      ,[Tags]
-      ,[SearchDetails]
-      ,[LastEditedBy]
-      ,[ValidFrom]
-      ,[ValidTo]
+SELECT *
   FROM [WideWorldImporters].[Warehouse].[StockItems]
   where StockItemName like '%urgent%' or StockItemName like 'Animal%'
 
@@ -43,10 +19,8 @@ SELECT [StockItemID]
   SELECT DISTINCT
     *
     FROM Sales.Orders AS o
-    INNER JOIN Sales.OrderLines AS ol
-        ON o.OrderID = ol.OrderID
-    WHERE o.PickingCompletedWhen IS NOT NULL
-      AND (ol.UnitPrice > 100 OR ol.Quantity > 20);
+    INNER JOIN Sales.OrderLines AS ol ON o.OrderID = ol.OrderID
+    WHERE o.PickingCompletedWhen IS NOT NULL AND (ol.UnitPrice > 100 OR ol.Quantity > 20)
 
   -- 4. Заказы поставщикам (Purchasing.Suppliers), которые должны быть исполнены (ExpectedDeliveryDate) в январе 2013 года с доставкой 
   -- "Air Freight" или "Refrigerated Air Freight" (DeliveryMethodName) и которые исполнены (IsOrderFinalized).
@@ -59,14 +33,12 @@ SELECT [StockItemID]
     dm.DeliveryMethodName,
     po.IsOrderFinalized
     FROM Purchasing.PurchaseOrders AS po
-    INNER JOIN Purchasing.Suppliers AS s
-        ON po.SupplierID = s.SupplierID
-    INNER JOIN Application.DeliveryMethods AS dm
-        ON po.DeliveryMethodID = dm.DeliveryMethodID
+    INNER JOIN Purchasing.Suppliers AS s ON po.SupplierID = s.SupplierID
+    INNER JOIN Application.DeliveryMethods AS dm ON po.DeliveryMethodID = dm.DeliveryMethodID
     WHERE po.ExpectedDeliveryDate >= '2013-01-01'
       AND po.ExpectedDeliveryDate < '2013-02-01'
       AND dm.DeliveryMethodName IN ('Air Freight', 'Refrigerated Air Freight')
-      AND po.IsOrderFinalized = 1;
+      AND po.IsOrderFinalized = 1
 
 
  -- 5. Десять последних продаж (по дате продажи) с именем клиента и именем сотрудника, 
@@ -81,3 +53,16 @@ SELECT [StockItemID]
    INNER JOIN Sales.Customers AS c ON o.CustomerID = c.CustomerID
    INNER JOIN Application.People AS p ON o.SalespersonPersonID = p.PersonID
   ORDER BY o.OrderDate DESC
+
+
+ -- 6. Все ид и имена клиентов и их контактные телефоны, которые покупали товар "Chocolate frogs 250g".
+
+ SELECT DISTINCT
+    c.CustomerID,
+    c.CustomerName,
+    c.PhoneNumber
+   FROM Sales.Customers AS c
+   INNER JOIN Sales.Orders AS o ON c.CustomerID = o.CustomerID
+   INNER JOIN Sales.OrderLines AS ol ON o.OrderID = ol.OrderID
+   INNER JOIN Warehouse.StockItems AS si ON ol.StockItemID = si.StockItemID
+   WHERE si.StockItemName = N'Chocolate frogs 250g'
