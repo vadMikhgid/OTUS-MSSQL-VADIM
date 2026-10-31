@@ -67,3 +67,17 @@ SELECT [StockItemID]
       AND po.ExpectedDeliveryDate < '2013-02-01'
       AND dm.DeliveryMethodName IN ('Air Freight', 'Refrigerated Air Freight')
       AND po.IsOrderFinalized = 1;
+
+
+ -- 5. Десять последних продаж (по дате продажи) с именем клиента и именем сотрудника, 
+ -- который оформил заказ (SalespersonPerson). Сделать без подзапросов.
+
+ SELECT TOP (10)
+    o.OrderID,
+    o.OrderDate,
+    c.CustomerName,
+    p.FullName AS SalespersonName
+   FROM Sales.Orders AS o
+   INNER JOIN Sales.Customers AS c ON o.CustomerID = c.CustomerID
+   INNER JOIN Application.People AS p ON o.SalespersonPersonID = p.PersonID
+  ORDER BY o.OrderDate DESC
