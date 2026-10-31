@@ -40,3 +40,10 @@ SELECT [StockItemID]
   -- 3. Заказы (Orders) с ценой товара (UnitPrice) более 100$ либо количеством единиц (Quantity) 
   --    товара более 20 штуки присутствующей датой комплектации всего заказа (PickingCompletedWhen).
 
+  SELECT DISTINCT
+    *
+    FROM Sales.Orders AS o
+    INNER JOIN Sales.OrderLines AS ol
+        ON o.OrderID = ol.OrderID
+    WHERE o.PickingCompletedWhen IS NOT NULL
+      AND (ol.UnitPrice > 100 OR ol.Quantity > 20);
