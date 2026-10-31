@@ -17,7 +17,10 @@ SELECT *
   --    товара более 20 штуки присутствующей датой комплектации всего заказа (PickingCompletedWhen).
 
   SELECT DISTINCT
-    *
+    o.OrderID,
+    o.OrderDate,
+    o.CustomerID,
+    o.PickingCompletedWhen
     FROM Sales.Orders AS o
     INNER JOIN Sales.OrderLines AS ol ON o.OrderID = ol.OrderID
     WHERE o.PickingCompletedWhen IS NOT NULL AND (ol.UnitPrice > 100 OR ol.Quantity > 20)
