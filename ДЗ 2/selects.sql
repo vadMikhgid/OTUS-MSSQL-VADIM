@@ -47,3 +47,23 @@ SELECT [StockItemID]
         ON o.OrderID = ol.OrderID
     WHERE o.PickingCompletedWhen IS NOT NULL
       AND (ol.UnitPrice > 100 OR ol.Quantity > 20);
+
+  -- 4. Заказы поставщикам (Purchasing.Suppliers), которые должны быть исполнены (ExpectedDeliveryDate) в январе 2013 года с доставкой 
+  -- "Air Freight" или "Refrigerated Air Freight" (DeliveryMethodName) и которые исполнены (IsOrderFinalized).
+
+  SELECT
+    po.PurchaseOrderID,
+    s.SupplierName,
+    po.OrderDate,
+    po.ExpectedDeliveryDate,
+    dm.DeliveryMethodName,
+    po.IsOrderFinalized
+    FROM Purchasing.PurchaseOrders AS po
+    INNER JOIN Purchasing.Suppliers AS s
+        ON po.SupplierID = s.SupplierID
+    INNER JOIN Application.DeliveryMethods AS dm
+        ON po.DeliveryMethodID = dm.DeliveryMethodID
+    WHERE po.ExpectedDeliveryDate >= '2013-01-01'
+      AND po.ExpectedDeliveryDate < '2013-02-01'
+      AND dm.DeliveryMethodName IN ('Air Freight', 'Refrigerated Air Freight')
+      AND po.IsOrderFinalized = 1;
