@@ -60,7 +60,7 @@ SELECT *
 
  -- 6. Все ид и имена клиентов и их контактные телефоны, которые покупали товар "Chocolate frogs 250g".
 
- SELECT DISTINCT
+ SELECT DISTINCT 
     c.CustomerID,
     c.CustomerName,
     c.PhoneNumber
@@ -69,3 +69,4 @@ SELECT *
    INNER JOIN Sales.OrderLines AS ol ON o.OrderID = ol.OrderID
    INNER JOIN Warehouse.StockItems AS si ON ol.StockItemID = si.StockItemID
    WHERE si.StockItemName = N'Chocolate frogs 250g'
+
