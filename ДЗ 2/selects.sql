@@ -28,7 +28,7 @@ SELECT *
   -- 4. Заказы поставщикам (Purchasing.Suppliers), которые должны быть исполнены (ExpectedDeliveryDate) в январе 2013 года с доставкой 
   -- "Air Freight" или "Refrigerated Air Freight" (DeliveryMethodName) и которые исполнены (IsOrderFinalized).
 
-  SELECT
+  SELECT  
     po.PurchaseOrderID,
     s.SupplierName,
     po.OrderDate,
