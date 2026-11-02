@@ -16,7 +16,7 @@ SELECT *
   -- 3. Заказы (Orders) с ценой товара (UnitPrice) более 100$ либо количеством единиц (Quantity) 
   --    товара более 20 штуки присутствующей датой комплектации всего заказа (PickingCompletedWhen).
 
-  SELECT DISTINCT
+  SELECT DISTINCT  
     o.OrderID,
     o.OrderDate,
     o.CustomerID,
