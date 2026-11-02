@@ -61,6 +61,7 @@ SELECT *
  -- 6. Все ид и имена клиентов и их контактные телефоны, которые покупали товар "Chocolate frogs 250g".
 
  SELECT DISTINCT 
+
     c.CustomerID,
     c.CustomerName,
     c.PhoneNumber
