@@ -47,7 +47,7 @@ SELECT *
  -- 5. Десять последних продаж (по дате продажи) с именем клиента и именем сотрудника, 
  -- который оформил заказ (SalespersonPerson). Сделать без подзапросов.
 
- SELECT TOP (10)
+ SELECT TOP (10) 
     o.OrderID,
     o.OrderDate,
     c.CustomerName,
