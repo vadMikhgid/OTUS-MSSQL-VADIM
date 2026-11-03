@@ -7,7 +7,7 @@ SELECT *
 
   -- 2. Поставщиков (Suppliers), у которых не было сделано ни одного заказа (PurchaseOrders).
 
-  SELECT s.[SupplierID]
+  SELECT s.[SupplierID]  
          ,[SupplierName]    
   FROM [Purchasing].[Suppliers] s
   left join [Purchasing].[PurchaseOrders] pp on pp.SupplierID = s.SupplierID
@@ -60,7 +60,7 @@ SELECT *
 
  -- 6. Все ид и имена клиентов и их контактные телефоны, которые покупали товар "Chocolate frogs 250g".
 
- SELECT DISTINCT
+ SELECT DISTINCT 
     c.CustomerID,
     c.CustomerName,
     c.PhoneNumber
