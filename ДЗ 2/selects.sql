@@ -22,7 +22,7 @@ SELECT *
     o.CustomerID,
     o.PickingCompletedWhen
     FROM Sales.Orders AS o
-    INNER JOIN Sales.OrderLines AS ol ON o.OrderID = ol.OrderID
+    JOIN Sales.OrderLines AS ol ON o.OrderID = ol.OrderID
     WHERE o.PickingCompletedWhen IS NOT NULL AND (ol.UnitPrice > 100 OR ol.Quantity > 20)
 
   -- 4. Заказы поставщикам (Purchasing.Suppliers), которые должны быть исполнены (ExpectedDeliveryDate) в январе 2013 года с доставкой 
@@ -35,9 +35,9 @@ SELECT *
     po.ExpectedDeliveryDate,
     dm.DeliveryMethodName,
     po.IsOrderFinalized
-    FROM Purchasing.PurchaseOrders AS po
-    INNER JOIN Purchasing.Suppliers AS s ON po.SupplierID = s.SupplierID
-    INNER JOIN Application.DeliveryMethods AS dm ON po.DeliveryMethodID = dm.DeliveryMethodID
+    FROM Purchasing.PurchaseOrders po
+    JOIN Purchasing.Suppliers s ON po.SupplierID = s.SupplierID
+    JOIN Application.DeliveryMethods dm ON po.DeliveryMethodID = dm.DeliveryMethodID
     WHERE po.ExpectedDeliveryDate >= '2013-01-01'
       AND po.ExpectedDeliveryDate < '2013-02-01'
       AND dm.DeliveryMethodName IN ('Air Freight', 'Refrigerated Air Freight')
@@ -52,9 +52,9 @@ SELECT *
     o.OrderDate,
     c.CustomerName,
     p.FullName AS SalespersonName
-   FROM Sales.Orders AS o
-   INNER JOIN Sales.Customers AS c ON o.CustomerID = c.CustomerID
-   INNER JOIN Application.People AS p ON o.SalespersonPersonID = p.PersonID
+   FROM Sales.Orders o
+   JOIN Sales.Customers c ON o.CustomerID = c.CustomerID
+   JOIN Application.People p ON o.SalespersonPersonID = p.PersonID
   ORDER BY o.OrderDate DESC
 
 
@@ -64,8 +64,8 @@ SELECT *
     c.CustomerID,
     c.CustomerName,
     c.PhoneNumber
-   FROM Sales.Customers AS c
-   INNER JOIN Sales.Orders AS o ON c.CustomerID = o.CustomerID
-   INNER JOIN Sales.OrderLines AS ol ON o.OrderID = ol.OrderID
-   INNER JOIN Warehouse.StockItems AS si ON ol.StockItemID = si.StockItemID
+   FROM Sales.Customers c
+   JOIN Sales.Orders o ON c.CustomerID = o.CustomerID
+   JOIN Sales.OrderLines ol ON o.OrderID = ol.OrderID
+   JOIN Warehouse.StockItems si ON ol.StockItemID = si.StockItemID
    WHERE si.StockItemName = N'Chocolate frogs 250g'
