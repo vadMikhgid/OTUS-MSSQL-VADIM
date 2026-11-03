@@ -8,7 +8,7 @@ SELECT *
   -- 2. Поставщиков (Suppliers), у которых не было сделано ни одного заказа (PurchaseOrders).
 
   SELECT s.[SupplierID]
-      ,[SupplierName]    
+         ,[SupplierName]    
   FROM [Purchasing].[Suppliers] s
   left join [Purchasing].[PurchaseOrders] pp on pp.SupplierID = s.SupplierID
   where pp.SupplierID is null
