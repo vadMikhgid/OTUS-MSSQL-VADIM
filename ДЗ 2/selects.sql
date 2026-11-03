@@ -16,7 +16,7 @@ SELECT *
   -- 3. Заказы (Orders) с ценой товара (UnitPrice) более 100$ либо количеством единиц (Quantity) 
   --    товара более 20 штуки присутствующей датой комплектации всего заказа (PickingCompletedWhen).
 
-  SELECT DISTINCT
+  SELECT DISTINCT  
     o.OrderID,
     o.OrderDate,
     o.CustomerID,
@@ -28,7 +28,7 @@ SELECT *
   -- 4. Заказы поставщикам (Purchasing.Suppliers), которые должны быть исполнены (ExpectedDeliveryDate) в январе 2013 года с доставкой 
   -- "Air Freight" или "Refrigerated Air Freight" (DeliveryMethodName) и которые исполнены (IsOrderFinalized).
 
-  SELECT
+  SELECT  
     po.PurchaseOrderID,
     s.SupplierName,
     po.OrderDate,
@@ -47,7 +47,7 @@ SELECT *
  -- 5. Десять последних продаж (по дате продажи) с именем клиента и именем сотрудника, 
  -- который оформил заказ (SalespersonPerson). Сделать без подзапросов.
 
- SELECT TOP (10)
+ SELECT TOP (10) 
     o.OrderID,
     o.OrderDate,
     c.CustomerName,
@@ -64,8 +64,8 @@ SELECT *
     c.CustomerID,
     c.CustomerName,
     c.PhoneNumber
-   FROM Sales.Customers c
-   JOIN Sales.Orders o ON c.CustomerID = o.CustomerID
-   JOIN Sales.OrderLines ol ON o.OrderID = ol.OrderID
-   JOIN Warehouse.StockItems si ON ol.StockItemID = si.StockItemID
+   FROM Sales.Customers AS c
+   INNER JOIN Sales.Orders AS o ON c.CustomerID = o.CustomerID
+   INNER JOIN Sales.OrderLines AS ol ON o.OrderID = ol.OrderID
+   INNER JOIN Warehouse.StockItems AS si ON ol.StockItemID = si.StockItemID
    WHERE si.StockItemName = N'Chocolate frogs 250g'
