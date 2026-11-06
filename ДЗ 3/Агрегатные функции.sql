@@ -84,8 +84,26 @@ having SUM(il.Quantity * il.UnitPrice) > 4600000
 Продажи смотреть в таблице Sales.Invoices и связанных таблицах.
 */
 
-напишите здесь свое решение
-
+SELECT 
+    YEAR(i.InvoiceDate)                     AS SalesYear,
+    MONTH(i.InvoiceDate)                    AS SalesMonth,
+    si.StockItemName,
+    SUM(il.Quantity * il.UnitPrice)         AS TotalSalesAmount,
+    MIN(i.InvoiceDate)                      AS FirstSaleDate,
+    SUM(il.Quantity)                        AS TotalQuantity
+FROM Sales.Invoices AS i
+JOIN Sales.InvoiceLines AS il   ON il.InvoiceID   = i.InvoiceID
+JOIN Warehouse.StockItems AS si ON si.StockItemID = il.StockItemID
+GROUP BY 
+    YEAR(i.InvoiceDate),
+    MONTH(i.InvoiceDate),
+    si.StockItemID,
+    si.StockItemName
+HAVING SUM(il.Quantity) < 50
+ORDER BY 
+    SalesYear,
+    SalesMonth,
+    si.StockItemName;
 -- ---------------------------------------------------------------------------
 -- Опционально
 -- ---------------------------------------------------------------------------
