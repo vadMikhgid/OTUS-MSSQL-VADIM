@@ -132,18 +132,20 @@ WHERE
       ,[PostalAddressLine2]
       ,[PostalPostalCode]
   FROM [WideWorldImporters].[Sales].[Customers] c
-  join (SELECT TOP (5) [CustomerID],Max([TransactionAmount]) as [max Transaction Amount]    
-          FROM [WideWorldImporters].[Sales].[CustomerTransactions]
-         group by [CustomerID]
-         order by 2 desc) as t on c.CustomerID = t.CustomerID
+  join (SELECT TOP (5) [CustomerID],[TransactionAmount] as [max Transaction Amount]    
+          FROM [WideWorldImporters].[Sales].[CustomerTransactions] ct
+          join Application.TransactionTypes as at on at.TransactionTypeID = ct.TransactionTypeID
+          WHERE TransactionTypeName = N'Customer Payment Received'         
+         order by ABS(TransactionAmount) DESC) as t on c.CustomerID = t.CustomerID
+   
 --cte
-with cte1 as 
+;with cte1 as 
 (
-SELECT TOP (5) [CustomerID]     
-      ,Max([TransactionAmount]) as [max Transaction Amount]    
-  FROM [WideWorldImporters].[Sales].[CustomerTransactions]
-  group by [CustomerID]
-  order by 2 desc
+SELECT TOP (5) [CustomerID],[TransactionAmount] as [max Transaction Amount]    
+          FROM [WideWorldImporters].[Sales].[CustomerTransactions] ct
+          join Application.TransactionTypes as at on at.TransactionTypeID = ct.TransactionTypeID
+          WHERE TransactionTypeName = N'Customer Payment Received'         
+         order by ABS(TransactionAmount) DESC
   )
   SELECT c.[CustomerID]
       ,[max Transaction Amount]
@@ -168,7 +170,63 @@ SELECT TOP (5) [CustomerID]
 который осуществлял упаковку заказов (PackedByPersonID).
 */
 
-TODO: напишите здесь свое решение
+--подзапрос
+SELECT DISTINCT
+    city.CityID,
+    city.CityName,
+    p.FullName AS PickedByPersonName
+FROM (
+    --3 самых дорогих товара
+    SELECT TOP (3)
+        StockItemID,
+        StockItemName,
+        UnitPrice
+    FROM Warehouse.StockItems
+    ORDER BY UnitPrice DESC
+) AS top3
+JOIN Sales.OrderLines AS ol
+    ON ol.StockItemID = top3.StockItemID
+JOIN Sales.Orders AS o
+    ON o.OrderID = ol.OrderID
+JOIN Sales.Customers AS c
+    ON c.CustomerID = o.CustomerID
+JOIN Application.Cities AS city
+    ON city.CityID = c.DeliveryCityID
+LEFT JOIN Application.People AS p
+    ON p.PersonID = o.PickedByPersonID
+ORDER BY city.CityName, p.FullName;
+
+--CTE
+WITH ct1 AS (
+    SELECT TOP (3)
+        StockItemID,
+        StockItemName,
+        UnitPrice
+    FROM Warehouse.StockItems
+    ORDER BY UnitPrice DESC
+),
+ct2 AS (
+    SELECT DISTINCT
+        city.CityID,
+        city.CityName,
+        p.FullName AS PickedByPersonName
+    FROM Sales.OrderLines AS ol
+    JOIN Sales.Orders AS o
+        ON o.OrderID = ol.OrderID
+    JOIN Sales.Customers AS c
+        ON c.CustomerID = o.CustomerID
+    JOIN Application.Cities AS city
+        ON city.CityID = c.DeliveryCityID
+    LEFT JOIN Application.People AS p
+        ON p.PersonID = o.PickedByPersonID
+    WHERE ol.StockItemID IN (SELECT StockItemID FROM ct1)
+)
+SELECT
+    CityID,
+    CityName,
+    PickedByPersonName
+FROM ct2
+ORDER BY CityName, PickedByPersonName;
 
 -- ---------------------------------------------------------------------------
 -- Опциональное задание
@@ -205,6 +263,3 @@ FROM Sales.Invoices
 		ON Invoices.InvoiceID = SalesTotals.InvoiceID
 ORDER BY TotalSumm DESC
 
--- --
-
-TODO: напишите здесь свое решение
