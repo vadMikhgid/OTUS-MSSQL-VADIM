@@ -118,7 +118,49 @@ WHERE
 Представьте несколько способов (в том числе с CTE). 
 */
 
-TODO: напишите здесь свое решение
+  SELECT c.[CustomerID]  
+      ,t.[max Transaction Amount]
+      ,[CustomerName]
+      ,[PhoneNumber]
+      ,[FaxNumber]
+      ,[WebsiteURL]
+      ,[DeliveryAddressLine1]
+      ,[DeliveryAddressLine2]
+      ,[DeliveryPostalCode]
+      ,[DeliveryLocation]
+      ,[PostalAddressLine1]
+      ,[PostalAddressLine2]
+      ,[PostalPostalCode]
+  FROM [WideWorldImporters].[Sales].[Customers] c
+  join (SELECT TOP (5) [CustomerID],Max([TransactionAmount]) as [max Transaction Amount]    
+          FROM [WideWorldImporters].[Sales].[CustomerTransactions]
+         group by [CustomerID]
+         order by 2 desc) as t on c.CustomerID = t.CustomerID
+--cte
+with cte1 as 
+(
+SELECT TOP (5) [CustomerID]     
+      ,Max([TransactionAmount]) as [max Transaction Amount]    
+  FROM [WideWorldImporters].[Sales].[CustomerTransactions]
+  group by [CustomerID]
+  order by 2 desc
+  )
+  SELECT c.[CustomerID]
+      ,[max Transaction Amount]
+      ,[CustomerName]
+      ,[PhoneNumber]
+      ,[FaxNumber]
+      ,[WebsiteURL]
+      ,[DeliveryAddressLine1]
+      ,[DeliveryAddressLine2]
+      ,[DeliveryPostalCode]
+      ,[DeliveryLocation]
+      ,[PostalAddressLine1]
+      ,[PostalAddressLine2]
+      ,[PostalPostalCode]
+  FROM [WideWorldImporters].[Sales].[Customers] c
+  join cte1 on c.[CustomerID] = cte1.CustomerID
+  
 
 /*
 4. Выберите города (ид и название), в которые были доставлены товары, 
