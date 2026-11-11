@@ -263,3 +263,33 @@ FROM Sales.Invoices
 		ON Invoices.InvoiceID = SalesTotals.InvoiceID
 ORDER BY TotalSumm DESC
 
+--Запрос возвращает список счетов с суммой больше 27 000, для каждого из которых показывает:
+--Номер счёта, Дата выставления счёта, ФИО продавца, оформившего счёт, Сумма счёта (без налога), Сумма собранных позиций по заказу 
+
+WITH InvoiceTotals AS (
+    SELECT InvoiceID, SUM(Quantity * UnitPrice) AS TotalSumm
+    FROM Sales.InvoiceLines
+    GROUP BY InvoiceID
+    HAVING SUM(Quantity * UnitPrice) > 27000
+),
+CompletedPickedTotals AS (
+    -- Сначала отфильтровываем собранные заказы, затем агрегируем подобранное количество
+    SELECT ol.OrderID, SUM(ol.PickedQuantity * ol.UnitPrice) AS TotalSummForPickedItems
+    FROM Sales.OrderLines AS ol
+    JOIN Sales.Orders AS o ON o.OrderID = ol.OrderID
+    WHERE o.PickingCompletedWhen IS NOT NULL
+    GROUP BY ol.OrderID
+)
+SELECT
+    i.InvoiceID,
+    i.InvoiceDate,
+    p.FullName AS SalesPersonName,
+    it.TotalSumm AS TotalSummByInvoice,
+    cpt.TotalSummForPickedItems
+FROM Sales.Invoices AS i
+JOIN InvoiceTotals AS it ON it.InvoiceID = i.InvoiceID
+LEFT JOIN Application.People AS p ON p.PersonID = i.SalespersonPersonID
+LEFT JOIN CompletedPickedTotals AS cpt ON cpt.OrderID = i.OrderID
+ORDER BY it.TotalSumm DESC;
+
+--сравнивая планы запросов статистика практически не изменилась.
